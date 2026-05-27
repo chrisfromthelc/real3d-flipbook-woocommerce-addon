@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * Plugin Name:   Real3D Flipbook WooCommerce Addon
  * Plugin URI:    https://github.com/chrisfromthelc/real3d-flipbook-woocommerce-addon
  * Description:   Addon for Real3D Flipbook. Checks WC product purchase status and displays flipbook.
@@ -13,6 +12,8 @@
  * Domain Path:   /languages
  * License:       GPL-2.0-or-later
  * License URI:   https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package Real3DFlipbookWooCommerceAddon
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

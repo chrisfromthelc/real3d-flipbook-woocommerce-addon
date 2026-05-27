@@ -2,6 +2,8 @@
 <ruleset name="Real3D Flipbook WooCommerce Addon">
 	<description>WordPress Coding Standards for Real3D Flipbook WooCommerce Addon.</description>
 
+	<arg name="extensions" value="php"/>
+
 	<rule ref="WordPress"/>
 
 	<rule ref="WordPress.NamingConventions.ValidVariableName">

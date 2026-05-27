@@ -2,6 +2,13 @@
 
 class ProductFlipbookTest extends WP_UnitTestCase {
 
+	public function set_up() {
+		parent::set_up();
+		if ( ! post_type_exists( 'product' ) ) {
+			register_post_type( 'product' );
+		}
+	}
+
 	public function test_save_meta_box_requires_nonce() {
 		$post_id  = $this->factory->post->create( array( 'post_type' => 'product' ) );
 		$instance = R3D_Woo::get_instance();

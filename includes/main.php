@@ -3,10 +3,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/*plugin class*/
+/** Plugin class. */
 class R3D_Woo {
 
-
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
 	public $version;
 	public $path;
 	public $plugin_dir_path;
@@ -14,7 +18,11 @@ class R3D_Woo {
 
 	const MINIMUM_REAL3D_FLIPBOOK_VERSION = '3.17.1';
 
-	// Singleton
+	/**
+	 * Singleton instance.
+	 *
+	 * @var R3D_Woo|null
+	 */
 	private static $instance = null;
 
 	public static function get_instance() {
@@ -44,7 +52,7 @@ class R3D_Woo {
 	public function plugin_activated() {
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- debug-only logging gated behind WP_DEBUG.
 			error_log( 'real3d flipbook woocommerce addon activated' );
 		}
 		$this->add_endpoint();
@@ -254,6 +262,8 @@ class R3D_Woo {
 		$statuses        = array_map( 'esc_sql', wc_get_is_paid_statuses() );
 		$statuses_string = "'" . implode( "','", $statuses ) . "'";
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $statuses_string is esc_sql'd, $variation_placeholders are %d format strings built from array_fill, caching not applicable for per-user purchase checks.
+
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ) {
 			// HPOS-aware query.
 			$variation_placeholders = implode( ',', array_fill( 0, count( $variation_ids ), '%d' ) );
@@ -264,7 +274,6 @@ class R3D_Woo {
 				$variation_ids
 			);
 
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $statuses_string is escaped above, $variation_placeholders are format strings
 			$results = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT DISTINCT oi_meta.meta_value FROM {$wpdb->prefix}woocommerce_order_items oi
@@ -296,7 +305,6 @@ class R3D_Woo {
 				$variation_ids
 			);
 
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $statuses_string is escaped above, $variation_placeholders are format strings
 			$results = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT DISTINCT im.meta_value FROM {$wpdb->prefix}woocommerce_order_items oi
@@ -322,6 +330,8 @@ class R3D_Woo {
 				)
 			);
 		}
+
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		return array_map( 'absint', $results );
 	}
@@ -452,7 +462,7 @@ class R3D_Woo {
 	/**
 	 * Save meta box content.
 	 *
-	 * @param int $post_id Post ID
+	 * @param int $post_id Post ID.
 	 */
 	public function save_meta_box( $post_id ) {
 
@@ -597,11 +607,13 @@ class R3D_Woo {
 	}
 
 	public function admin_notice_minimum_real3d_flipbook_version() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- WP core admin activation redirect; no nonce available.
 		if ( isset( $_GET['activate'] ) ) {
 			unset( $_GET['activate'] );
 		}
 
 		$message = sprintf(
+			/* translators: %1$s: addon plugin name, %2$s: required plugin name, %3$s: required version number */
 			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'real3d-flipbook-woocommerce-addon' ),
 			'<strong>' . esc_html__( 'Real3D Flipbook WooCommerce Addon', 'real3d-flipbook-woocommerce-addon' ) . '</strong>',
 			'<strong>' . esc_html__( 'Real3D Flipbook', 'real3d-flipbook-woocommerce-addon' ) . '</strong>',
@@ -612,6 +624,7 @@ class R3D_Woo {
 	}
 
 	public function admin_notice_missing_real3d_flipbook() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- WP core admin activation redirect; no nonce available.
 		if ( isset( $_GET['activate'] ) ) {
 			unset( $_GET['activate'] );
 		}
@@ -627,6 +640,7 @@ class R3D_Woo {
 	}
 
 	public function admin_notice_missing_woocommerce() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- WP core admin activation redirect; no nonce available.
 		if ( isset( $_GET['activate'] ) ) {
 			unset( $_GET['activate'] );
 		}
@@ -777,16 +791,16 @@ class R3D_Woo {
 	 * @param int[]  $r3d_post_ids          Array of r3d post IDs to display.
 	 * @param string $selected_flipbook_ids Semicolon-separated currently-selected IDs.
 	 * @param string $section_title         Heading text for the section.
-	 * @param string $class                 Additional CSS class for the wrapper element.
+	 * @param string $css_class                 Additional CSS class for the wrapper element.
 	 */
-	private static function render_flipbook_thumbnails( $r3d_post_ids, $selected_flipbook_ids, $section_title, $class ) {
+	private static function render_flipbook_thumbnails( $r3d_post_ids, $selected_flipbook_ids, $section_title, $css_class ) {
 		$selected_flipbook_ids_array = explode( ';', $selected_flipbook_ids );
 		$total                       = count( $r3d_post_ids );
-		$wrapper_id                  = 'r3d-wrapper-' . sanitize_html_class( $class ? $class : 'purchased' );
+		$wrapper_id                  = 'r3d-wrapper-' . sanitize_html_class( $css_class ? $css_class : 'purchased' );
 
 		echo '<h4>' . esc_html( $section_title ) . '</h4>';
 		echo "<input type='search' class='r3d-pf-search' placeholder='" . esc_attr__( 'Search flipbooks...', 'real3d-flipbook-woocommerce-addon' ) . "' />";
-		echo "<div id='" . esc_attr( $wrapper_id ) . "' class='r3d-thumbs-wrapper " . esc_attr( $class ) . "'>";
+		echo "<div id='" . esc_attr( $wrapper_id ) . "' class='r3d-thumbs-wrapper " . esc_attr( $css_class ) . "'>";
 		echo "<div class='r3d-thumbs'>";
 		foreach ( $r3d_post_ids as $post_id ) {
 			$flipbook      = r3d_get_flipbook( $post_id );
