@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package plugin
+        run: |
+          mkdir -p dist/real3d-flipbook-woocommerce-addon
+          rsync -a --exclude='vendor' --exclude='tests' \
+            --exclude='docs' --exclude='.github' --exclude='.git' \
+            --exclude='phpunit.xml.dist' --exclude='phpcs.xml' \
+            --exclude='composer.json' --exclude='composer.lock' \
+            --exclude='.gitignore' --exclude='.DS_Store' \
+            . dist/real3d-flipbook-woocommerce-addon/
+          cd dist && zip -r real3d-flipbook-woocommerce-addon.zip real3d-flipbook-woocommerce-addon/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/real3d-flipbook-woocommerce-addon.zip
+          generate_release_notes: true

@@ -1,0 +1,46 @@
+.r3d-product-flipbook-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.r3d-product-flipbook-wrap:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.r3d-product-flipbook-wrap > div[class^="real3dflipbook"] {
+  position: static !important;
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.r3d-product-flipbook-wrap img {
+  display: block;
+}
+
+.r3d-product-flipbook-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  pointer-events: none;
+  opacity: 0.85;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.r3d-product-flipbook-wrap:hover .r3d-product-flipbook-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08);
+}

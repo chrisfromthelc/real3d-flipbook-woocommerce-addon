@@ -1,0 +1,15 @@
+node_modules/
+vendor/
+composer.lock
+.DS_Store
+Thumbs.db
+.env
+.env.*
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+.beads/
+.intelephense/
+.lsp.json

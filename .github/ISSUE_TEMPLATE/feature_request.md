@@ -1,0 +1,17 @@
+---
+name: Feature Request
+title: "[Feature]: "
+labels: enhancement
+---
+
+## Description
+
+A clear description of the feature.
+
+## Use Case
+
+Why is this feature needed?
+
+## Proposed Solution
+
+How should this feature work?
